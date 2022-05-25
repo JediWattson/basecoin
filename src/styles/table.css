@@ -1,23 +1,17 @@
 table {
-    text-align: center;
-    width: 40%;
+    text-align: end;
+    width: 80%;
     margin: 32px auto 0 auto;
 }
 
 th {
-    padding: 8px 0;
+    padding: 8px 8px 8px 0;
 }
 
-td, th {
-    width: 20%;
+td {
+    padding-right: 12px;
 }
-
 
 table, th, td {
     border: 1px solid;
-}
-
-td:first-child, th:first-child {
-    text-align: end;
-    padding-right: 8px;
 }

@@ -1,10 +1,23 @@
 import React from "react";
-import withData, { ExchangeItem } from "../../lib/withData"
+import useCoinbase, { ExchangeItem, useSpotPrice } from "../../lib/useCoinbase"
 
 import "../styles/table.css"
 
+function CurrentRow(props: ExchangeItem): JSX.Element {
+    return (
+        <tr>
+            <td>
+                {props.name}
+            </td>
+            <td>
+                {useSpotPrice(props.id)}
+            </td>
+        </tr>
+    )
+}
+
 function Table(){
-    const rates = withData()
+    const rates = useCoinbase()
 
     return (
         <table>
@@ -14,29 +27,14 @@ function Table(){
                         Currency
                     </th>
                     <th>
-                        Exchange Rate (USD)
-                    </th>
-                    <th>
-                        Price (USD)
+                        Current Price (USD)
                     </th>
                 </tr>
             </thead>
             <tbody>
-                {rates.map<JSX.Element>((currency: ExchangeItem) => {
-                    return (
-                        <tr key={currency.id}>
-                            <td>
-                                {currency.name}
-                            </td>
-                            <td>
-                                {currency.value}
-                            </td>
-                            <td>
-                                "n/a"
-                            </td>
-                        </tr>
-                    )
-                })}
+                {rates.map<JSX.Element>((currency: ExchangeItem) => 
+                    <CurrentRow key={currency.id} {...currency} />
+                )}
             </tbody>
         </table>
     )

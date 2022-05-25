@@ -21,12 +21,16 @@ const defState: ExchangeItem[] = []
  * @returns {number} difference between r1 and r2 for descending ordered array
  */
 function sortRates(r1: RateDataItem, r2: RateDataItem): number {
-    return parseFloat(r1.value) - parseFloat(r2.value)
+    return parseFloat(r2.value) - parseFloat(r1.value)
 }
 
 async function getToJSON(url: string): Promise<any> {
     const res = await fetch(url)
     return res.json()
+}
+
+function invertBase(rate: string): string {    
+    return (1.00/parseFloat(rate)).toFixed(2)
 }
 
 /** 
@@ -40,7 +44,7 @@ async function fetchExchangeRates(setData: React.Dispatch<ExchangeItem[]>){
     const rates = rateData.data?.rates
     if(rates){
         const sortedRates = currencies.map((currency: CurrencyDataItem) => ({            
-            value: rates[currency.id],
+            value: invertBase(rates[currency.id]),
             ...currency
         }))
         .filter(currency => currency.value)
@@ -54,7 +58,7 @@ async function fetchExchangeRates(setData: React.Dispatch<ExchangeItem[]>){
  * this is a hook to handle fetching and modelling data
  * @returns {object} CurrencyData type from the call
  */
-function withData(): ExchangeItem[] {
+function useCoinbase(): ExchangeItem[] {
     const [data, setData] = useState<ExchangeItem[]>(defState)
     useEffect(function(){
         fetchExchangeRates(setData)
@@ -63,5 +67,20 @@ function withData(): ExchangeItem[] {
     return data.slice(0, 10)
 }
 
-export default withData
+
+async function fetchSpotPrice(setData: React.Dispatch<string>, url: string) {
+    const spotPrice = await getToJSON(url)    
+    setData(spotPrice.data?.amount)
+}
+
+export function useSpotPrice(currency: string): string {
+    const [data, setData] = useState('N/A')
+    useEffect(function() {
+        fetchSpotPrice(setData, `https://api.coinbase.com/v2/prices/${currency}-USD/buy`)
+    }, [])
+
+    return data
+}
+
+export default useCoinbase
 
