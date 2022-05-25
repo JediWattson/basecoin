@@ -16,7 +16,7 @@ function CurrentRow(props: ExchangeItem): JSX.Element {
                 {useSpotPrice(props.id)}
             </td>
             <td>
-                N/A
+                {useSpotPrice(props.id, true)}
             </td>
         </tr>
     )
@@ -24,7 +24,7 @@ function CurrentRow(props: ExchangeItem): JSX.Element {
 
 function Table() {
     const rates = useCoinbase()
-        
+
     return (
         <table>
             <thead>
@@ -52,14 +52,22 @@ function Table() {
 function withContext(){ 
     const [, setUpdate] = useState<number | null>()
     spotPriceCache.onUpdate = function(id: string, value: string){
-        this.last[id] = this.current[id]
         this.current[id] = value        
+        setUpdate(Date.now())
+    }
+
+    spotPriceCache.saveToLast = function(){
+        this.last = {...this.current}
+        this.current = {}                
         setUpdate(Date.now())
     }
 
     return (
         <SpotPriceContext.Provider value={spotPriceCache}>
             <Table />
+            <button onClick={() => spotPriceCache.saveToLast()}>
+                press me
+            </button>
         </SpotPriceContext.Provider>            
     )
 }
