@@ -16,10 +16,10 @@ async function fetchExchangeRates(setData: React.Dispatch<ExchangeItem[]>){
     const rates = rateData.data?.rates
     if(rates){
         const sortedRates = currencies.map((currency: CurrencyDataItem) => ({            
-            value: invertBase(rates[currency.id]),
+            price: invertBase(rates[currency.id]),
             ...currency
         }))
-        .filter(currency => currency.value)
+        .filter(currency => currency.price)
         .sort(sortRates)
         
         setData(sortedRates)

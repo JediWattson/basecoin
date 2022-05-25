@@ -1,11 +1,12 @@
-import React from "react";
+import React, {useContext, useState} from "react";
 import useCoinbase from "../../lib/useCoinbase"
 import useSpotPrice from '../../lib/useSpotPrice'
+import SpotPriceContext, { spotPriceCache } from '../../lib/SpotPriceContext'
 import { ExchangeItem } from "../../lib/CoinbaseModel";
 
 import "../styles/table.css"
 
-function CurrentRow(props: ExchangeItem): JSX.Element {
+function CurrentRow(props: ExchangeItem): JSX.Element {    
     return (
         <tr>
             <td>
@@ -21,9 +22,9 @@ function CurrentRow(props: ExchangeItem): JSX.Element {
     )
 }
 
-function Table(){
+function Table() {
     const rates = useCoinbase()
-
+        
     return (
         <table>
             <thead>
@@ -48,4 +49,19 @@ function Table(){
     )
 }
 
-export default Table;
+function withContext(){ 
+    const [, setUpdate] = useState<number | null>()
+    spotPriceCache.onUpdate = function(id: string, value: string){
+        this.last[id] = this.current[id]
+        this.current[id] = value        
+        setUpdate(Date.now())
+    }
+
+    return (
+        <SpotPriceContext.Provider value={spotPriceCache}>
+            <Table />
+        </SpotPriceContext.Provider>            
+    )
+}
+
+export default withContext;

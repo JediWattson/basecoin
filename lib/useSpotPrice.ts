@@ -1,18 +1,25 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { getToJSON } from './helpers'
+import SpotPriceContext from './SpotPriceContext'
 
-async function fetchSpotPrice(setData: React.Dispatch<string>, url: string) {
+async function fetchSpotPrice(onUpdate: Function, url: string) {
     const spotPrice = await getToJSON(url)    
-    setData(spotPrice.data?.amount)
+    onUpdate(spotPrice.data?.amount)
 }
 
-function useSpotPrice(currency: string): string {
-    const [data, setData] = useState('N/A')
+function useSpotPrice(id: string): string {
+    const spotPriceContext = useContext(SpotPriceContext)
     useEffect(function() {
-        fetchSpotPrice(setData, `https://api.coinbase.com/v2/prices/${currency}-USD/buy`)
+        if(spotPriceContext.current[id]) return 
+        const url = `https://api.coinbase.com/v2/prices/${id}-USD/buy`
+        function handleUpdate(value: string){            
+            spotPriceContext.onUpdate(id, value) 
+        }
+        fetchSpotPrice(handleUpdate, url)
     }, [])
 
-    return data
+    console.log(id, spotPriceContext.current[id]);
+    return spotPriceContext.current[id]
 }
 
 export default useSpotPrice

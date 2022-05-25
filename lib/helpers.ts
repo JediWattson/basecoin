@@ -7,7 +7,7 @@ import {RateDataItem} from './CoinbaseModel'
  * @returns {number} difference between r1 and r2 for descending ordered array
  */
 function sortRates(r1: RateDataItem, r2: RateDataItem): number {
-    return parseFloat(r2.value) - parseFloat(r1.value)
+    return parseFloat(r2.price) - parseFloat(r1.price)
 }
 
 async function getToJSON(url: string): Promise<any> {

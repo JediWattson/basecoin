@@ -4,7 +4,7 @@ export type CurrencyDataItem = {
 } 
 
 export type RateDataItem = {
-    value: string,
+    price: string,
 }
 
 export type ExchangeItem = (RateDataItem & CurrencyDataItem)    
