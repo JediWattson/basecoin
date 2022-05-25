@@ -56,7 +56,7 @@ function Table(){
                 <thead>
                     <tr>
                         {strings.table.header.map(s => (
-                            <th>
+                            <th key={s}>
                                 {s}
                             </th>
                         ))}
