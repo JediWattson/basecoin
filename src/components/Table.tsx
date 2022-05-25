@@ -1,5 +1,7 @@
 import React from "react";
-import useCoinbase, { ExchangeItem, useSpotPrice } from "../../lib/useCoinbase"
+import useCoinbase from "../../lib/useCoinbase"
+import useSpotPrice from '../../lib/useSpotPrice'
+import { ExchangeItem } from "../../lib/CoinbaseModel";
 
 import "../styles/table.css"
 
@@ -11,6 +13,9 @@ function CurrentRow(props: ExchangeItem): JSX.Element {
             </td>
             <td>
                 {useSpotPrice(props.id)}
+            </td>
+            <td>
+                N/A
             </td>
         </tr>
     )
@@ -28,6 +33,9 @@ function Table(){
                     </th>
                     <th>
                         Current Price (USD)
+                    </th>
+                    <th>
+                        Previous Price (USD)
                     </th>
                 </tr>
             </thead>
