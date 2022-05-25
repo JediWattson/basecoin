@@ -21,3 +21,15 @@ td:first-child, th:first-child {
 table, th, td {
     border: 1px solid;
 }
+
+.button-container {
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+button {
+    font-size: 22px;
+    padding: 8px 16px;
+}

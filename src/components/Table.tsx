@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, { useState } from "react";
 import useCoinbase from "../../lib/useCoinbase"
 import useSpotPrice from '../../lib/useSpotPrice'
 import SpotPriceContext, { spotPriceCache } from '../../lib/SpotPriceContext'
@@ -22,34 +22,19 @@ function CurrentRow(props: ExchangeItem): JSX.Element {
     )
 }
 
-function Table() {
-    const rates = useCoinbase()
-
-    return (
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        Currency
-                    </th>
-                    <th>
-                        Current Price (USD)
-                    </th>
-                    <th>
-                        Previous Price (USD)
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {rates.map<JSX.Element>((currency: ExchangeItem) => 
-                    <CurrentRow key={currency.id} {...currency} />
-                )}
-            </tbody>
-        </table>
-    )
+const strings = {
+    table: {
+        header: [
+            "Currency",
+            "Current Price (USD)",
+            "Previous Price (USD)"
+        ]
+    },
+    button: "Update Prices"
 }
 
-function withContext(){ 
+function Table(){ 
+    const rates = useCoinbase()
     const [, setUpdate] = useState<number | null>()
     spotPriceCache.onUpdate = function(id: string, value: string){
         this.current[id] = value        
@@ -57,19 +42,39 @@ function withContext(){
     }
 
     spotPriceCache.saveToLast = function(){
-        this.last = {...this.current}
-        this.current = {}                
+        Object.entries(this.current).forEach(entry => {
+            if(this.current[entry[0]])
+                this.last[entry[0]] = this.current[entry[0]]
+        })
+        this.current = {}
         setUpdate(Date.now())
     }
 
     return (
         <SpotPriceContext.Provider value={spotPriceCache}>
-            <Table />
-            <button onClick={() => spotPriceCache.saveToLast()}>
-                press me
-            </button>
+            <table>
+                <thead>
+                    <tr>
+                        {strings.table.header.map(s => (
+                            <th>
+                                {s}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {rates.map<JSX.Element>((currency: ExchangeItem) => 
+                        <CurrentRow key={currency.id} {...currency} />
+                    )}
+                </tbody>
+            </table>
+            <div className="button-container">
+                <button onClick={() => spotPriceCache.saveToLast()}>
+                    {strings.button}
+                </button>
+            </div>
         </SpotPriceContext.Provider>            
     )
 }
 
-export default withContext;
+export default Table;

@@ -22,7 +22,7 @@ function useSpotPrice(id: string, isLast: boolean = false): string {
     if(isLast)
         return spotPriceContext.last[id] || "N/A"
 
-    return spotPriceContext.current[id] || "fetching..."
+    return spotPriceContext.current[id] || spotPriceContext.last[id] || "fetching..."
 }
 
 export default useSpotPrice
